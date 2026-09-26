@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teryx Video</title>
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Nunito:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="../Main/Fotos/favicon.png" type="image/png">
+</head>
+<body>
+
+    <header class="video-header">
+        <a href="../Main/index.html" class="brand-name-small">Teryx <span class="video-tag">Video</span></a>
+    </header>
+
+    <main class="watch-layout">
+        <div class="player-column">
+            <div class="player-wrapper">
+                <iframe
+                    id="ytPlayer"
+                    src=""
+                    title="Teryx video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <h2 id="videoTitle" class="watch-title"></h2>
+            <div id="videoMeta" class="watch-meta"></div>
+        </div>
+
+        <aside class="related-column">
+            <h3 class="related-heading">Похожие видео</h3>
+            <div id="relatedList" class="related-list"></div>
+        </aside>
+    </main>
+
+    <script src="videos.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const currentId = params.get('id');
+        const current = findVideo(currentId);
+
+        const ytPlayer = document.getElementById('ytPlayer');
+        const videoTitle = document.getElementById('videoTitle');
+        const videoMeta = document.getElementById('videoMeta');
+        const relatedList = document.getElementById('relatedList');
+
+        if (current) {
+            ytPlayer.src = `https://www.youtube.com/embed/${current.id}?rel=0`;
+            videoTitle.textContent = current.title;
+            videoMeta.innerHTML = `<span class="watch-channel">${current.channel || ''}</span> · ${current.views || ''} · ${current.uploaded || ''}`;
+        } else {
+            videoTitle.textContent = "Видео не найдено";
+        }
+
+        VIDEO_LIST
+            .filter(v => v.id !== currentId)
+            .forEach(video => {
+                const item = document.createElement('a');
+                item.className = 'related-item';
+                item.href = `watch.html?id=${encodeURIComponent(video.id)}`;
+
+                const thumb = document.createElement('img');
+                thumb.className = 'related-thumb';
+                thumb.src = getThumbnail(video.id);
+                thumb.alt = video.title;
+                item.appendChild(thumb);
+
+                const textCol = document.createElement('div');
+                textCol.className = 'related-text';
+
+                const title = document.createElement('div');
+                title.className = 'related-title';
+                title.textContent = video.title;
+                textCol.appendChild(title);
+
+                const meta = document.createElement('div');
+                meta.className = 'related-meta';
+                meta.innerHTML = `<div>${video.channel || ''}</div><div>${video.views || ''}</div>`;
+                textCol.appendChild(meta);
+
+                item.appendChild(textCol);
+
+                relatedList.appendChild(item);
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teryx Search</title>
+    <!-- Подключаем мягкие шрифты Quicksand и Nunito -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Nunito:wght@400;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Подключаем внешний файл стилей CSS -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="Fotos/favicon.png" type="image/png">
+</head>
+<body>
+
+    <div class="search-container">
+        
+        <!-- Шапка: Название Teryx с крупными наплывающими облаками -->
+        <div class="brand-wrapper">
+            <span class="cloud left">☁️</span>
+            <h1 class="brand-name">Teryx</h1>
+            <span class="cloud right">☁️</span>
+        </div>
+
+        <!-- Панель популярных сервисов -->
+        <div class="services-bar">
+            <a href="../Videos/index.html" class="service-link">
+                <span class="service-icon icon-video"></span> Teryx Video
+            </a>
+            <a href="https://pinterest.com" target="_blank" class="service-link">
+                <span class="service-icon icon-pin"></span> Pinterest
+            </a>
+            <a href="#" class="service-link">
+                <span class="service-icon icon-wb"></span> Другие сервисы
+            </a>
+        </div>
+
+        <!-- БЛОК С ДВУМЯ ПОЛЯМИ ВВОДА -->
+        <div class="search-inputs-group">
+            <!-- Поле только для поисковых запросов -->
+            <div class="search-box-wrapper">
+                <input type="text" id="queryInput" class="search-input" placeholder="Введите поисковый запрос (например: комп)..." autofocus autocomplete="off">
+                <div id="historyDropdown" class="history-dropdown"></div>
+            </div>
+            
+            <!-- Поле только для прямых ссылок (URL) -->
+            <div class="search-box-wrapper" style="margin-top: 15px;">
+                <input type="text" id="urlInput" class="search-input url-style" placeholder="Введите адрес сайта (например: google.com)..." autocomplete="off">
+            </div>
+        </div>
+
+        <!-- Откидной список поисковиков -->
+        <div class="engine-dropdown-container">
+            <button type="button" id="dropdownTrigger" class="dropdown-trigger">Искать в...</button>
+            <div class="dropdown-menu">
+                <div class="dropdown-item" data-engine="yandex">
+                    <div class="engine-logo logo-yandex">Я</div>
+                    Яндекс
+                </div>
+                <div class="dropdown-item" data-engine="google">
+                    <div class="engine-logo logo-google">G</div>
+                    Google
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Подключаем логику -->
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+/* Общие стили страницы */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #04054f; /* Глубокий темно-синий фон */
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    color: #ffffff;
+}
+
+/* Контейнер всей поисковой системы */
+.search-container {
+    width: 100%;
+    max-width: 650px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+
+/* Блок заголовка с наложением облаков */
+.brand-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.brand-name {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #ffffff;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 2;
+}
+
+.cloud {
+    font-size: 4.2rem;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3)) 
+            drop-shadow(0 2px 5px rgba(255, 255, 255, 0.5));
+    position: relative;
+    z-index: 3;
+    user-select: none;
+}
+
+.cloud.left {
+    margin-right: -25px;
+    animation: floatLeft 4.5s ease-in-out infinite;
+}
+
+.cloud.right {
+    margin-left: -20px;
+    animation: floatRight 4.5s ease-in-out infinite;
+    animation-delay: 2.25s;
+}
+
+@keyframes floatLeft {
+    0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+    50% { transform: translateY(-6px) translateX(-4px) rotate(-2deg); }
+}
+
+@keyframes floatRight {
+    0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) translateX(4px) rotate(2deg); }
+}
+
+/* Панель популярных сервисов НАД поиском */
+.services-bar {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.service-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.service-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.service-icon {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.icon-yt { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; }
+.icon-video { background-color: #00f0ff; box-shadow: 0 0 8px #00f0ff; }
+.icon-pin { background-color: #e60023; box-shadow: 0 0 8px #e60023; }
+.icon-wb { background-color: #00f0ff; box-shadow: 0 0 8px #00f0ff; }
+
+/* Округлое поле ввода с неоново-голубой рамкой */
+.search-box-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    padding: 18px 28px;
+    font-size: 1.15rem;
+    border-radius: 50px;
+    border: 2px solid #00f0ff;
+    background-color: rgba(255, 255, 255, 0.96);
+    color: #111111;
+    outline: none;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.35), 
+                inset 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    background-color: #ffffff;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.65), 
+                0 8px 25px rgba(0,0,0,0.3);
+    border-color: #00ffff;
+}
+
+/* Дополнительный стиль для поля ввода URL */
+.search-input.url-style {
+    border-color: #a600ff; /* Фиолетовая неоновая рамка для отличия */
+    box-shadow: 0 0 15px rgba(166, 0, 255, 0.3), inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.search-input.url-style:focus {
+    box-shadow: 0 0 25px rgba(166, 0, 255, 0.6), 0 8px 25px rgba(0,0,0,0.3);
+    border-color: #d400ff;
+}
+
+/* Выпадающий список истории поиска под полем запроса */
+.history-dropdown {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    background: #060866;
+    border: 1px solid #00f0ff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(0, 240, 255, 0.2);
+    z-index: 50;
+    overflow: hidden;
+    display: none;
+    text-align: left;
+}
+
+.history-dropdown.visible {
+    display: block;
+}
+
+.history-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.history-item:hover {
+    background: rgba(0, 240, 255, 0.15);
+}
+
+.history-item .history-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-item .history-remove {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.1rem;
+    line-height: 1;
+    padding: 0 4px;
+    margin-left: 10px;
+}
+
+.history-item .history-remove:hover {
+    color: #ff5c5c;
+}
+
+.history-clear {
+    text-align: center;
+    padding: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    border-top: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.history-clear:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* Контейнер для отступа между полями */
+.search-inputs-group {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+/* --- ОТКИДНОЙ СПИСОК ПОИСКОВИКОВ --- */
+.engine-dropdown-container {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+.dropdown-trigger {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.dropdown-trigger:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: #00f0ff;
+    color: #ffffff;
+}
+
+.dropdown-trigger::after {
+    content: "▼";
+    font-size: 0.7rem;
+    margin-left: 2px;
+    transition: transform 0.2s ease;
+}
+
+.engine-dropdown-container:hover .dropdown-trigger::after {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 110%;
+    background: #060866;
+    border: 1px solid #00f0ff;
+    border-radius: 12px;
+    width: 180px;
+    padding: 6px 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px rgba(0, 240, 255, 0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.engine-dropdown-container:hover .dropdown-menu {
+    display: flex;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: left;
+    transition: background 0.2s ease;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background: rgba(0, 240, 255, 0.15);
+    color: #ffffff;
+}
+
+.engine-logo {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    user-select: none;
+}
+
+.logo-yandex {
+    background-color: #ff0000;
+    color: #ffffff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.logo-google {
+    background-color: #ffffff;
+    color: #4285F4;
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
+}
+
+/* Адаптивность для мобильных экранов */
+@media (max-width: 480px) {
+    .brand-name { font-size: 2.8rem; }
+    .cloud { font-size: 3rem; }
+    .cloud.left { margin-right: -15px; }
+    .cloud.right { margin-left: -12px; }
+    .search-input { padding: 14px 22px; font-size: 1rem; }
+    .services-bar { gap: 10px; }
+}
+
