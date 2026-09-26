@@ -49,9 +49,9 @@
         const videoMeta = document.getElementById('videoMeta');
         const relatedList = document.getElementById('relatedList');
 
-        function renderRelated(excludeId) {
+        function renderRelated(videos, excludeId) {
             relatedList.innerHTML = '';
-            VIDEO_LIST
+            videos
                 .filter(v => v.id !== excludeId)
                 .forEach(video => {
                     const item = document.createElement('a');
@@ -88,20 +88,33 @@
             videoMeta.innerHTML = `<span class="watch-channel">${video.channel || ''}</span> · ${video.views || ''} · ${video.uploaded || ''}`;
         }
 
+        async function loadRelated(video) {
+            if (!YT_API_KEY || YT_API_KEY === 'YOUR_API_KEY_HERE') {
+                renderRelated(VIDEO_LIST, video.id);
+                return;
+            }
+            try {
+                const related = await fetchRelated(video.title, video.id);
+                renderRelated(related.length > 0 ? related : VIDEO_LIST, video.id);
+            } catch (err) {
+                renderRelated(VIDEO_LIST, video.id);
+            }
+        }
+
         async function init() {
             const local = findVideo(currentId);
             if (local) {
                 renderPlayer(local);
-                renderRelated(currentId);
+                loadRelated(local);
                 return;
             }
 
-            // Видео не из локального списка (пришло из поиска) — тянем данные с YouTube API
+            // Видео не из локального списка (пришло из поиска/трендов) — тянем данные с YouTube API
             videoTitle.textContent = 'Загрузка...';
-            renderRelated(currentId);
 
             if (!currentId) {
                 videoTitle.textContent = 'Видео не найдено';
+                renderRelated(VIDEO_LIST, null);
                 return;
             }
 
@@ -109,13 +122,16 @@
                 const fetched = await fetchYouTubeVideo(currentId);
                 if (fetched) {
                     renderPlayer(fetched);
+                    loadRelated(fetched);
                 } else {
                     videoTitle.textContent = 'Видео не найдено';
+                    renderRelated(VIDEO_LIST, currentId);
                 }
             } catch (err) {
                 ytPlayer.src = `https://www.youtube.com/embed/${currentId}?rel=0`;
                 videoTitle.textContent = 'Не удалось загрузить данные видео';
                 videoMeta.textContent = err.message;
+                renderRelated(VIDEO_LIST, currentId);
             }
         }
 
