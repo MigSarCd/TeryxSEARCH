@@ -15,9 +15,59 @@ body {
 .video-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
     padding: 16px 24px;
     background: rgba(255, 255, 255, 0.04);
     border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+.video-search-form {
+    display: flex;
+    gap: 8px;
+    flex: 1 1 320px;
+    max-width: 480px;
+}
+
+.video-search-input {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: 2px solid rgba(0, 240, 255, 0.35);
+    background: rgba(255, 255, 255, 0.95);
+    color: #111111;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.video-search-input:focus {
+    border-color: #00f0ff;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.35);
+}
+
+.video-search-btn {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background: #00f0ff;
+    color: #04054f;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.video-search-btn:hover {
+    background: #ffffff;
+}
+
+.search-status {
+    padding: 12px 28px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .brand-name-small {
@@ -31,6 +81,49 @@ body {
 .video-tag {
     color: #00f0ff;
     font-weight: 500;
+}
+
+/* Панель вкладок-категорий */
+.category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 28px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.category-tab {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    color: rgba(255, 255, 255, 0.75);
+    padding: 8px 18px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-tab:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.category-tab.active {
+    background: #00f0ff;
+    border-color: #00f0ff;
+    color: #04054f;
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+}
+
+.feed-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1rem;
 }
 
 /* --- ЛЕНТА (index.html) --- */
