@@ -38,55 +38,88 @@
         </aside>
     </main>
 
+    <script src="config.js"></script>
     <script src="videos.js"></script>
     <script>
         const params = new URLSearchParams(window.location.search);
         const currentId = params.get('id');
-        const current = findVideo(currentId);
 
         const ytPlayer = document.getElementById('ytPlayer');
         const videoTitle = document.getElementById('videoTitle');
         const videoMeta = document.getElementById('videoMeta');
         const relatedList = document.getElementById('relatedList');
 
-        if (current) {
-            ytPlayer.src = `https://www.youtube.com/embed/${current.id}?rel=0`;
-            videoTitle.textContent = current.title;
-            videoMeta.innerHTML = `<span class="watch-channel">${current.channel || ''}</span> · ${current.views || ''} · ${current.uploaded || ''}`;
-        } else {
-            videoTitle.textContent = "Видео не найдено";
+        function renderRelated(excludeId) {
+            relatedList.innerHTML = '';
+            VIDEO_LIST
+                .filter(v => v.id !== excludeId)
+                .forEach(video => {
+                    const item = document.createElement('a');
+                    item.className = 'related-item';
+                    item.href = `watch.html?id=${encodeURIComponent(video.id)}`;
+
+                    const thumb = document.createElement('img');
+                    thumb.className = 'related-thumb';
+                    thumb.src = getThumbnail(video.id);
+                    thumb.alt = video.title;
+                    item.appendChild(thumb);
+
+                    const textCol = document.createElement('div');
+                    textCol.className = 'related-text';
+
+                    const title = document.createElement('div');
+                    title.className = 'related-title';
+                    title.textContent = video.title;
+                    textCol.appendChild(title);
+
+                    const meta = document.createElement('div');
+                    meta.className = 'related-meta';
+                    meta.innerHTML = `<div>${video.channel || ''}</div><div>${video.views || ''}</div>`;
+                    textCol.appendChild(meta);
+
+                    item.appendChild(textCol);
+                    relatedList.appendChild(item);
+                });
         }
 
-        VIDEO_LIST
-            .filter(v => v.id !== currentId)
-            .forEach(video => {
-                const item = document.createElement('a');
-                item.className = 'related-item';
-                item.href = `watch.html?id=${encodeURIComponent(video.id)}`;
+        function renderPlayer(video) {
+            ytPlayer.src = `https://www.youtube.com/embed/${video.id}?rel=0`;
+            videoTitle.textContent = video.title;
+            videoMeta.innerHTML = `<span class="watch-channel">${video.channel || ''}</span> · ${video.views || ''} · ${video.uploaded || ''}`;
+        }
 
-                const thumb = document.createElement('img');
-                thumb.className = 'related-thumb';
-                thumb.src = getThumbnail(video.id);
-                thumb.alt = video.title;
-                item.appendChild(thumb);
+        async function init() {
+            const local = findVideo(currentId);
+            if (local) {
+                renderPlayer(local);
+                renderRelated(currentId);
+                return;
+            }
 
-                const textCol = document.createElement('div');
-                textCol.className = 'related-text';
+            // Видео не из локального списка (пришло из поиска) — тянем данные с YouTube API
+            videoTitle.textContent = 'Загрузка...';
+            renderRelated(currentId);
 
-                const title = document.createElement('div');
-                title.className = 'related-title';
-                title.textContent = video.title;
-                textCol.appendChild(title);
+            if (!currentId) {
+                videoTitle.textContent = 'Видео не найдено';
+                return;
+            }
 
-                const meta = document.createElement('div');
-                meta.className = 'related-meta';
-                meta.innerHTML = `<div>${video.channel || ''}</div><div>${video.views || ''}</div>`;
-                textCol.appendChild(meta);
+            try {
+                const fetched = await fetchYouTubeVideo(currentId);
+                if (fetched) {
+                    renderPlayer(fetched);
+                } else {
+                    videoTitle.textContent = 'Видео не найдено';
+                }
+            } catch (err) {
+                ytPlayer.src = `https://www.youtube.com/embed/${currentId}?rel=0`;
+                videoTitle.textContent = 'Не удалось загрузить данные видео';
+                videoMeta.textContent = err.message;
+            }
+        }
 
-                item.appendChild(textCol);
-
-                relatedList.appendChild(item);
-            });
+        init();
     </script>
 </body>
 </html>
