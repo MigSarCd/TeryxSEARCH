@@ -97,10 +97,31 @@
                 renderCards(searchResults);
                 return;
             }
-            const videos = activeCategory === 'all'
-                ? VIDEO_LIST
-                : VIDEO_LIST.filter(v => v.category === activeCategory);
-            renderCards(videos);
+
+            if (activeCategory === 'other') {
+                renderCards(VIDEO_LIST.filter(v => v.category === 'other'));
+                return;
+            }
+
+            if (!YT_API_KEY || YT_API_KEY === 'YOUR_API_KEY_HERE') {
+                searchStatus.textContent = 'Ключ YouTube API не настроен — впиши его в config.js. Пока показываю ручной список.';
+                renderCards(activeCategory === 'all' ? VIDEO_LIST : VIDEO_LIST.filter(v => v.category === activeCategory));
+                return;
+            }
+
+            searchStatus.textContent = 'Загружаем рекомендации...';
+            feedContainer.innerHTML = '';
+            const categoryId = activeCategory === 'all' ? null : YT_CATEGORY_IDS[activeCategory];
+
+            fetchTrending(categoryId)
+                .then(videos => {
+                    searchStatus.textContent = '';
+                    renderCards(videos);
+                })
+                .catch(err => {
+                    searchStatus.textContent = 'Не удалось загрузить рекомендации: ' + err.message;
+                    renderCards(activeCategory === 'all' ? VIDEO_LIST : VIDEO_LIST.filter(v => v.category === activeCategory));
+                });
         }
 
         searchForm.addEventListener('submit', async (event) => {
