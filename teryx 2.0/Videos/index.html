@@ -14,39 +14,124 @@
 
     <header class="video-header">
         <a href="../Main/index.html" class="brand-name-small">Teryx <span class="video-tag">Video</span></a>
+        <form id="videoSearchForm" class="video-search-form">
+            <input type="text" id="videoSearchInput" class="video-search-input" placeholder="Поиск видео на YouTube..." autocomplete="off">
+            <button type="submit" class="video-search-btn">Найти</button>
+        </form>
     </header>
+
+    <nav class="category-tabs" id="categoryTabs"></nav>
+
+    <div id="searchStatus" class="search-status"></div>
 
     <main class="feed-container" id="feedContainer">
         <!-- Карточки видео подставляются скриптом -->
     </main>
 
+    <script src="config.js"></script>
     <script src="videos.js"></script>
     <script>
         const feedContainer = document.getElementById('feedContainer');
+        const categoryTabs = document.getElementById('categoryTabs');
+        const searchForm = document.getElementById('videoSearchForm');
+        const searchInput = document.getElementById('videoSearchInput');
+        const searchStatus = document.getElementById('searchStatus');
+        let activeCategory = 'all';
+        let searchResults = null; // null = обычная лента, массив = результаты поиска
 
-        VIDEO_LIST.forEach(video => {
-            const card = document.createElement('a');
-            card.className = 'video-card';
-            card.href = `watch.html?id=${encodeURIComponent(video.id)}`;
+        function renderTabs() {
+            categoryTabs.innerHTML = '';
+            categoryTabs.style.display = searchResults ? 'none' : 'flex';
+            CATEGORIES.forEach(cat => {
+                const tab = document.createElement('button');
+                tab.type = 'button';
+                tab.className = 'category-tab' + (cat.id === activeCategory ? ' active' : '');
+                tab.textContent = cat.label;
+                tab.addEventListener('click', () => {
+                    activeCategory = cat.id;
+                    renderTabs();
+                    renderFeed();
+                });
+                categoryTabs.appendChild(tab);
+            });
+        }
 
-            const thumb = document.createElement('img');
-            thumb.className = 'video-thumb';
-            thumb.src = getThumbnail(video.id);
-            thumb.alt = video.title;
-            card.appendChild(thumb);
+        function renderCards(videos) {
+            feedContainer.innerHTML = '';
 
-            const title = document.createElement('div');
-            title.className = 'video-title';
-            title.textContent = video.title;
-            card.appendChild(title);
+            if (videos.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'feed-empty';
+                empty.textContent = 'Ничего не найдено.';
+                feedContainer.appendChild(empty);
+                return;
+            }
 
-            const meta = document.createElement('div');
-            meta.className = 'video-meta';
-            meta.innerHTML = `<div class="video-channel">${video.channel || ''}</div><div class="video-stats">${video.views || ''} · ${video.uploaded || ''}</div>`;
-            card.appendChild(meta);
+            videos.forEach(video => {
+                const card = document.createElement('a');
+                card.className = 'video-card';
+                card.href = `watch.html?id=${encodeURIComponent(video.id)}`;
 
-            feedContainer.appendChild(card);
+                const thumb = document.createElement('img');
+                thumb.className = 'video-thumb';
+                thumb.src = getThumbnail(video.id);
+                thumb.alt = video.title;
+                card.appendChild(thumb);
+
+                const title = document.createElement('div');
+                title.className = 'video-title';
+                title.textContent = video.title;
+                card.appendChild(title);
+
+                const meta = document.createElement('div');
+                meta.className = 'video-meta';
+                meta.innerHTML = `<div class="video-channel">${video.channel || ''}</div><div class="video-stats">${video.views || ''} · ${video.uploaded || ''}</div>`;
+                card.appendChild(meta);
+
+                feedContainer.appendChild(card);
+            });
+        }
+
+        function renderFeed() {
+            if (searchResults) {
+                renderCards(searchResults);
+                return;
+            }
+            const videos = activeCategory === 'all'
+                ? VIDEO_LIST
+                : VIDEO_LIST.filter(v => v.category === activeCategory);
+            renderCards(videos);
+        }
+
+        searchForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const query = searchInput.value.trim();
+            if (query === '') {
+                searchResults = null;
+                searchStatus.textContent = '';
+                renderTabs();
+                renderFeed();
+                return;
+            }
+
+            if (!YT_API_KEY || YT_API_KEY === 'YOUR_API_KEY_HERE') {
+                searchStatus.textContent = 'Ключ YouTube API не настроен — впиши его в config.js.';
+                return;
+            }
+
+            searchStatus.textContent = 'Ищем...';
+            try {
+                searchResults = await searchYouTube(query);
+                searchStatus.textContent = `Результаты по запросу «${query}»`;
+                renderTabs();
+                renderFeed();
+            } catch (err) {
+                searchStatus.textContent = 'Не удалось получить результаты: ' + err.message;
+            }
         });
+
+        renderTabs();
+        renderFeed();
     </script>
 </body>
 </html>
